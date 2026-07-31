@@ -3,297 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthy Dog Chews - Natural Treats Your Dog Will Love</title>
+    <title>Buy Now - Free & Easy</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
         }
         
         body {
-            line-height: 1.6;
-            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
         
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Header */
-        header {
-            background: #2c3e50;
-            color: white;
-            padding: 1rem 0;
-            position: fixed;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
             width: 100%;
-            top: 0;
-            z-index: 1000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.5s ease;
         }
         
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
         }
         
-        /* Hero Section */
-        .hero {
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 150px 0 100px;
-            text-align: center;
-        }
-        
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .cta-button {
-            display: inline-block;
-            background: #e74c3c;
-            color: white;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        
-        .cta-button:hover {
-            background: #c0392b;
-        }
-        
-        /* Features */
-        .features {
-            padding: 80px 0;
-            background: #f8f9fa;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
-        
-        .feature-card {
-            text-align: center;
-            padding: 30px 20px;
-            background: white;
+            border: none;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         
-        .feature-card i {
-            font-size: 2.5rem;
-            color: #667eea;
-            margin-bottom: 1rem;
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
         }
         
-        /* Testimonials */
-        .testimonials {
-            padding: 80px 0;
-            text-align: center;
+        .submit-btn:active {
+            transform: translateY(0);
         }
         
-        .testimonial-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #999;
+            font-size: 14px;
         }
         
-        .testimonial-card {
-            padding: 30px;
-            background: white;
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #ddd;
+        }
+        
+        .divider::before { margin-right: 15px; }
+        .divider::after { margin-left: 15px; }
+        
+        .payment-btn {
+            width: 100%;
+            padding: 16px;
+            background: #2ecc71;
+            color: white;
+            border: none;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            text-align: left;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
-        .testimonial-card img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-right: 15px;
-            float: left;
+        .payment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.4);
         }
         
-        /* FAQ */
-        .faq {
-            padding: 80px 0;
+        .payment-info {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #888;
+        }
+        
+        .payment-info strong {
+            color: #333;
+        }
+        
+        #status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        
+        #status.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        #status.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .upi-id {
             background: #f8f9fa;
-        }
-        
-        .faq-item {
-            margin-bottom: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        /* Final CTA */
-        .final-cta {
-            background: #2c3e50;
-            color: white;
-            padding: 80px 0;
+            padding: 10px;
+            border-radius: 8px;
             text-align: center;
-        }
-        
-        /* Footer */
-        footer {
-            background: #1a252f;
-            color: white;
-            padding: 30px 0;
-            text-align: center;
-        }
-        
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-            }
+            font-family: monospace;
+            font-size: 18px;
+            color: #333;
+            margin-top: 10px;
+            border: 1px dashed #667eea;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <nav>
-                <div class="logo">HealthyPaws</div>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Finally! A Dog Treat Your Pet Will LOVE</h1>
-            <p>100% Natural, Digestible Chews That Promote Dental Health & Reduce Anxiety</p>
-            <p><strong>Special Launch Offer: 50% OFF For First-Time Customers</strong></p>
-            <a href="YOUR_AFFILIATE_LINK_HERE" class="cta-button">GET 50% DISCOUNT NOW</a>
-            <p style="margin-top: 15px; font-size: 0.9rem;">Limited Time Offer - Selling Fast ⚠️</p>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-        <div class="container">
-            <h2 style="text-align: center; margin-bottom: 20px;">Why Pet Parents Are Switching</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div>🦷</div>
-                    <h3>Dental Health</h3>
-                    <p>Reduces plaque and tartar buildup naturally through chewing action</p>
-                </div>
-                <div class="feature-card">
-                    <div>🌿</div>
-                    <h3>100% Natural</h3>
-                    <p>No artificial preservatives, colors, or fillers. Just pure goodness</p>
-                </div>
-                <div class="feature-card">
-                    <div>😊</div>
-                    <h3>Reduces Anxiety</h3>
-                    <p>Perfect for separation anxiety, thunderstorms, or fireworks</p>
-                </div>
-                <div class="feature-card">
-                    <div>🇮🇳</div>
-                    <h3>Made in India</h3>
-                    <p>Specifically formulated for Indian breeds and climate conditions</p>
-                </div>
+    <div class="container">
+        <h1>📧 Contact & Buy</h1>
+        <p class="subtitle">Fill the form, then pay securely via UPI</p>
+        
+        <!-- CONTACT FORM -->
+        <form id="contactForm">
+            <div class="form-group">
+                <label>Your Name</label>
+                <input type="text" id="name" placeholder="John Doe" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="john@example.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Message</label>
+                <textarea id="message" placeholder="Tell me what you need..." required></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn">📨 Send Message</button>
+        </form>
+        
+        <div id="status"></div>
+        
+        <div class="divider">OR</div>
+        
+        <!-- PAYMENT BUTTON -->
+        <button class="payment-btn" onclick="showUPI()">
+            💳 Buy Now - ₹500
+        </button>
+        
+        <div id="upiSection" style="display: none; margin-top: 20px;">
+            <div class="upi-id">
+                📱 UPI ID: <strong>sushantkadam75@okaxis</strong>
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <p style="font-size: 14px; color: #666;">Scan QR or pay to above UPI ID</p>
+                <img id="qrImage" src="" alt="QR Code" style="max-width: 200px; margin-top: 10px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            </div>
+            <div class="payment-info">
+                <strong>Note:</strong> After payment, email us the transaction ID
             </div>
         </div>
-    </section>
-
-    <!-- Testimonials -->
-    <section class="testimonials">
-        <div class="container">
-            <h2>What Indian Dog Owners Say</h2>
-            <div class="testimonial-grid">
-                <div class="testimonial-card">
-                    <div style="overflow: hidden;">
-                        <div style="background: #ddd; width: 60px; height: 60px; border-radius: 50%; float: left; margin-right: 15px;"></div>
-                        <h4>Priya S. - Mumbai</h4>
-                        <p>"My Labrador used to hate dental chews until we tried these! His breath is fresher and he actually asks for them!"</p>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div style="overflow: hidden;">
-                        <div style="background: #ddd; width: 60px; height: 60px; border-radius: 50%; float: left; margin-right: 15px;"></div>
-                        <h4>Rohan K. - Delhi</h4>
-                        <p>"During Diwali, these chews were a lifesaver. My indie dog stayed calm despite the loud fireworks. Thank you!"</p>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div style="overflow: hidden;">
-                        <div style="background: #ddd; width: 60px; height: 60px; border-radius: 50%; float: left; margin-right: 15px;"></div>
-                        <h4>Ananya P. - Bangalore</h4>
-                        <p>"Finally a natural product made for Indian conditions. No more importing expensive treats from abroad!"</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="faq">
-        <div class="container">
-            <h2 style="text-align: center; margin-bottom: 40px;">Frequently Asked Questions</h2>
-            <div class="faq-item">
-                <h3>Are these suitable for Indian breed dogs?</h3>
-                <p>Yes! Specifically tested and formulated for Indian pariah dogs, Rajapalayams, Mudhol hounds, and other popular Indian breeds.</p>
-            </div>
-            <div class="faq-item">
-                <h3>How soon will I see results?</h3>
-                <p>Most owners notice improved dental health within 2-3 weeks, and reduced anxiety during the first use.</p>
-            </div>
-            <div class="faq-item">
-                <h3>What's the delivery time?</h3>
-                <p>We ship across India with delivery in 3-7 business days. Metro cities often get delivery in 2-3 days.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Final CTA -->
-    <section class="final-cta">
-        <div class="container">
-            <h2>Don't Let Your Dog Miss Out</h2>
-            <p style="margin: 20px 0; font-size: 1.2rem;">Join 10,000+ Happy Indian Pet Parents</p>
-            <a href="YOUR_AFFILIATE_LINK_HERE" class="cta-button">CLAIM YOUR 50% DISCOUNT</a>
-            <p style="margin-top: 15px; font-size: 0.9rem;">30-Day Money Back Guarantee | Free Shipping Over ₹499</p>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 HealthyPaws. All rights reserved.</p>
-            <p style="margin-top: 10px; font-size: 0.8rem;">This is an independent affiliate website. We may earn a commission from qualifying purchases.</p>
-        </div>
-    </footer>
+    </div>
+    
+    <script>
+        // ============================================
+        // CONTACT FORM - Sends to Google Sheets
+        // ============================================
+        
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            const status = document.getElementById('status');
+            
+            // DISABLE FORM
+            document.querySelector('.submit-btn').disabled = true;
+            document.querySelector('.submit-btn').textContent = 'Sending...';
+            
+            // SEND TO GOOGLE APPS SCRIPT WEB APP
+            fetch('https://script.google.com/macros/s/AKfycbyasM6XP0ezuoRWNtnEsRGzOa2tip6ntJmbUslbv7I45x2eiXusIF3KfHBC-JV8FjPELA/exec', {
+                method: 'POST',
+                mode: 'no-cors',  // Important for Google Apps Script
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    name: name,
+                    email: email,
+                    message: message
+                })
+            })
+            .then(() => {
+                status.className = 'success';
+                status.textContent = '✅ Message sent! I\'ll get back to you soon.';
+                document.getElementById('contactForm').reset();
+                document.querySelector('.submit-btn').disabled = false;
+                document.querySelector('.submit-btn').textContent = '📨 Send Message';
+            })
+            .catch((error) => {
+                status.className = 'error';
+                status.textContent = '❌ Error sending. Please try again.';
+                document.querySelector('.submit-btn').disabled = false;
+                document.querySelector('.submit-btn').textContent = '📨 Send Message';
+                console.error('Error:', error);
+            });
+        });
+        
+        // ============================================
+        // SHOW UPI PAYMENT (Completely FREE)
+        // ============================================
+        
+        function showUPI() {
+            const section = document.getElementById('upiSection');
+            const qrImage = document.getElementById('qrImage');
+            
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                // If you have a QR code image, uncomment below
+                // qrImage.src = 'YOUR_QR_CODE_IMAGE_URL';
+                // Or generate one using a free QR API
+                qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=sushantkadam75@okaxis&pn=Sushant&am=500&cu=INR`;
+                qrImage.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
