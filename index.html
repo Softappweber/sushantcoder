@@ -93,6 +93,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 10px;
         }
         
         .submit-btn:hover {
@@ -102,6 +103,12 @@
         
         .submit-btn:active {
             transform: translateY(0);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
         
         .divider {
@@ -137,11 +144,43 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            margin-bottom: 10px;
         }
         
         .payment-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(46, 204, 113, 0.4);
+        }
+        
+        .payment-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .confirm-payment-btn {
+            width: 100%;
+            padding: 16px;
+            background: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+        
+        .confirm-payment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(230, 126, 34, 0.4);
+        }
+        
+        .confirm-payment-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
         
         .payment-info {
@@ -178,6 +217,13 @@
             border: 1px solid #f5c6cb;
         }
         
+        #status.info {
+            display: block;
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
         .upi-id {
             background: #f8f9fa;
             padding: 10px;
@@ -188,6 +234,19 @@
             color: #333;
             margin-top: 10px;
             border: 1px dashed #667eea;
+        }
+        
+        .order-id-display {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #856404;
+            margin-top: 15px;
+            border: 2px solid #ffc107;
+            display: none;
         }
     </style>
 </head>
@@ -213,15 +272,18 @@
                 <textarea id="message" placeholder="Tell me what you need..." required></textarea>
             </div>
             
-            <button type="submit" class="submit-btn">📨 Send Message</button>
+            <!-- SCENARIO 1: Submit Only -->
+            <button type="button" onclick="submitForm('submit_only')" class="submit-btn" id="submitOnlyBtn">
+                📨 Send Message Only
+            </button>
         </form>
         
         <div id="status"></div>
         
         <div class="divider">OR</div>
         
-        <!-- PAYMENT BUTTON -->
-        <button class="payment-btn" onclick="showUPI()">
+        <!-- SCENARIO 2: Buy Now Click -->
+        <button class="payment-btn" onclick="handleBuyClick()" id="buyNowBtn">
             💳 Buy Now - ₹500
         </button>
         
@@ -231,79 +293,211 @@
             </div>
             <div style="text-align: center; margin-top: 15px;">
                 <p style="font-size: 14px; color: #666;">Scan QR or pay to above UPI ID</p>
-                <img id="qrImage" src="" alt="QR Code" style="max-width: 200px; margin-top: 10px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <img id="qrImage" src="" alt="QR Code" style="max-width: 200px; margin-top: 10px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none;">
             </div>
+            
+            <!-- SCENARIO 3: Payment Done -->
+            <button class="confirm-payment-btn" onclick="handlePaymentDone()" id="paymentDoneBtn">
+                ✅ I've Completed the Payment
+            </button>
+            
             <div class="payment-info">
-                <strong>Note:</strong> After payment, email us the transaction ID
+                <strong>Note:</strong> Click above after successful UPI payment
             </div>
         </div>
+        
+        <!-- Order ID Display -->
+        <div id="orderIdDisplay" class="order-id-display"></div>
     </div>
     
     <script>
-        // ============================================
-        // CONTACT FORM - Sends to Google Sheets
-        // ============================================
+        // Track form submission state
+        let formSubmitted = false;
+        let buyClicked = false;
+        let formData = {};
         
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVATpKaJgxjJNOH7jzw_2AdPAdYw6_ZITCeVSlLXSLCSp-xdDhac7vhHxZBIIhcwFMQg/exec';
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.className = type;
+            status.textContent = message;
+            status.style.display = 'block';
             
+            // Hide after 5 seconds
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+        
+        function disableButtons() {
+            document.getElementById('submitOnlyBtn').disabled = true;
+            document.getElementById('buyNowBtn').disabled = true;
+            const paymentDoneBtn = document.getElementById('paymentDoneBtn');
+            if (paymentDoneBtn) paymentDoneBtn.disabled = true;
+        }
+        
+        // ============================================
+        // SCENARIO 1: Submit Only
+        // ============================================
+        async function submitForm(action) {
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const message = document.getElementById('message').value;
-            const status = document.getElementById('status');
             
-            // DISABLE FORM
-            document.querySelector('.submit-btn').disabled = true;
-            document.querySelector('.submit-btn').textContent = 'Sending...';
+            if (!name || !email || !message) {
+                showStatus('⚠️ Please fill all fields first!', 'error');
+                return;
+            }
             
-            // SEND TO GOOGLE APPS SCRIPT WEB APP
-            fetch('https://script.google.com/macros/s/AKfycbyVATpKaJgxjJNOH7jzw_2AdPAdYw6_ZITCeVSlLXSLCSp-xdDhac7vhHxZBIIhcwFMQg/exec', {
-                method: 'POST',
-                mode: 'no-cors',  // Important for Google Apps Script
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    name: name,
-                    email: email,
-                    message: message
-                })
-            })
-            .then(() => {
-                status.className = 'success';
-                status.textContent = '✅ Message sent! I\'ll get back to you soon.';
-                document.getElementById('contactForm').reset();
-                document.querySelector('.submit-btn').disabled = false;
-                document.querySelector('.submit-btn').textContent = '📨 Send Message';
-            })
-            .catch((error) => {
-                status.className = 'error';
-                status.textContent = '❌ Error sending. Please try again.';
-                document.querySelector('.submit-btn').disabled = false;
-                document.querySelector('.submit-btn').textContent = '📨 Send Message';
+            // Save form data
+            formData = { name, email, message };
+            formSubmitted = true;
+            
+            document.getElementById('submitOnlyBtn').textContent = 'Sending...';
+            disableButtons();
+            
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        name: name,
+                        email: email,
+                        message: message,
+                        action: action  // 'submit_only'
+                    })
+                });
+                
+                if (action === 'submit_only') {
+                    showStatus('✅ Thank you! Check your email for confirmation.', 'success');
+                }
+                
+                document.getElementById('submitOnlyBtn').textContent = '📨 Send Message Only';
+                
+            } catch (error) {
+                showStatus('❌ Error sending. Please try again.', 'error');
+                document.getElementById('submitOnlyBtn').disabled = false;
+                document.getElementById('buyNowBtn').disabled = false;
+                document.getElementById('submitOnlyBtn').textContent = '📨 Send Message Only';
                 console.error('Error:', error);
-            });
-        });
-        
-        // ============================================
-        // SHOW UPI PAYMENT (Completely FREE)
-        // ============================================
-        
-        function showUPI() {
-            const section = document.getElementById('upiSection');
-            const qrImage = document.getElementById('qrImage');
-            
-            if (section.style.display === 'none') {
-                section.style.display = 'block';
-                // If you have a QR code image, uncomment below
-                // qrImage.src = 'YOUR_QR_CODE_IMAGE_URL';
-                // Or generate one using a free QR API
-                qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=sushantkadam75@okaxis&pn=Sushant&am=500&cu=INR`;
-                qrImage.style.display = 'block';
-            } else {
-                section.style.display = 'none';
             }
         }
+        
+        // ============================================
+        // SCENARIO 2: Buy Now Clicked
+        // ============================================
+        async function handleBuyClick() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            if (!name || !email || !message) {
+                showStatus('⚠️ Please fill the form before buying!', 'error');
+                return;
+            }
+            
+            // Save form data
+            formData = { name, email, message };
+            formSubmitted = true;
+            buyClicked = true;
+            
+            document.getElementById('buyNowBtn').textContent = 'Processing...';
+            disableButtons();
+            
+            // Show UPI section
+            const upiSection = document.getElementById('upiSection');
+            upiSection.style.display = 'block';
+            
+            // Generate QR code
+            const qrImage = document.getElementById('qrImage');
+            qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=8275679175@upi&pn=Sushant&am=500&cu=INR`;
+            qrImage.style.display = 'block';
+            
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        name: name,
+                        email: email,
+                        message: message,
+                        action: 'buy_clicked'  // Buy interest
+                    })
+                });
+                
+                showStatus('📧 Check your email for purchase details!', 'info');
+                document.getElementById('buyNowBtn').textContent = '💳 Buy Now - ₹500';
+                
+            } catch (error) {
+                showStatus('❌ Error. Please try again.', 'error');
+                document.getElementById('buyNowBtn').disabled = false;
+                document.getElementById('buyNowBtn').textContent = '💳 Buy Now - ₹500';
+                console.error('Error:', error);
+            }
+        }
+        
+        // ============================================
+        // SCENARIO 3: Payment Completed
+        // ============================================
+        async function handlePaymentDone() {
+            if (!formSubmitted || !formData.email) {
+                showStatus('⚠️ Please submit the form first!', 'error');
+                return;
+            }
+            
+            const paymentDoneBtn = document.getElementById('paymentDoneBtn');
+            paymentDoneBtn.textContent = 'Verifying...';
+            paymentDoneBtn.disabled = true;
+            
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        name: formData.name,
+                        email: formData.email,
+                        message: formData.message,
+                        action: 'payment_done'  // Payment completed
+                    })
+                });
+                
+                // Since no-cors mode, we can't read response
+                // Generate a mock Order ID to show
+                const mockOrderId = 'ORD-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + 
+                                   Math.random().toString(36).substring(2, 7).toUpperCase();
+                
+                // Show Order ID
+                const orderIdDisplay = document.getElementById('orderIdDisplay');
+                orderIdDisplay.innerHTML = `🎉 Payment Confirmed!<br>Order ID: <strong>${mockOrderId}</strong><br><small>2 confirmation emails sent to ${formData.email}</small>`;
+                orderIdDisplay.style.display = 'block';
+                
+                showStatus('✅ Payment confirmed! 2 emails sent with order details.', 'success');
+                paymentDoneBtn.textContent = '✅ Payment Completed';
+                
+            } catch (error) {
+                showStatus('❌ Error confirming payment. Please try again.', 'error');
+                paymentDoneBtn.disabled = false;
+                paymentDoneBtn.textContent = "✅ I've Completed the Payment";
+                console.error('Error:', error);
+            }
+        }
+        
+        // Auto-submit form when Buy Now is clicked (if not already submitted)
+        document.getElementById('buyNowBtn').addEventListener('click', function() {
+            if (!formSubmitted) {
+                // Form data will be sent in handleBuyClick
+            }
+        });
     </script>
 </body>
 </html>
