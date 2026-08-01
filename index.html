@@ -101,14 +101,9 @@
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
         }
         
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-        
         .submit-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
-            transform: none;
         }
         
         .divider {
@@ -155,7 +150,18 @@
         .payment-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
-            transform: none;
+        }
+        
+        .upi-id {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 18px;
+            color: #333;
+            margin-top: 10px;
+            border: 1px dashed #667eea;
         }
         
         .confirm-payment-btn {
@@ -169,7 +175,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 10px;
+            margin-top: 15px;
         }
         
         .confirm-payment-btn:hover:not(:disabled) {
@@ -180,7 +186,6 @@
         .confirm-payment-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
-            transform: none;
         }
         
         .payment-info {
@@ -224,18 +229,6 @@
             border: 1px solid #bee5eb;
         }
         
-        .upi-id {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            font-family: monospace;
-            font-size: 18px;
-            color: #333;
-            margin-top: 10px;
-            border: 1px dashed #667eea;
-        }
-        
         .order-id-display {
             background: #fff3cd;
             padding: 15px;
@@ -247,6 +240,22 @@
             margin-top: 15px;
             border: 2px solid #ffc107;
             display: none;
+        }
+        
+        .helper-text {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .highlight-box {
+            background: #fff9e6;
+            border: 1px solid #ffd700;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #856404;
         }
     </style>
 </head>
@@ -290,20 +299,37 @@
         <!-- UPI SECTION (Hidden until Buy Now clicked) -->
         <div id="upiSection" style="display: none; margin-top: 20px;">
             <div class="upi-id">
-                📱 UPI ID: <strong>sushantkadam75@okaxis</strong>
+                📱 Pay to UPI ID: <strong>sushantkadam75@okaxis</strong>
             </div>
             <div style="text-align: center; margin-top: 15px;">
                 <p style="font-size: 14px; color: #666;">Scan QR or pay to above UPI ID</p>
                 <img id="qrImage" src="" alt="QR Code" style="max-width: 200px; margin-top: 10px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none;">
             </div>
             
+            <!-- USER'S UPI ID INPUT -->
+            <div class="form-group" style="margin-top: 20px;">
+                <label>📱 Your UPI ID (from which you paid)</label>
+                <input type="text" id="userUpiId" placeholder="e.g., yourname@okhdfcbank" style="font-family: monospace;">
+                <p class="helper-text">📍 Enter the UPI ID you used to send the payment</p>
+            </div>
+            
+            <!-- HOW TO FIND UPI ID HELP -->
+            <div class="highlight-box">
+                <strong>💡 How to find your UPI ID:</strong><br>
+                • Open Google Pay / PhonePe / BHIM<br>
+                • Tap your profile picture<br>
+                • You'll see your UPI ID (e.g., name@okaxis)<br>
+                • Enter that exact ID above
+            </div>
+            
             <!-- I HAVE PAID BUTTON -->
             <button class="confirm-payment-btn" onclick="handlePaymentDone()" id="paymentDoneBtn">
-                ✅ Click Here When Payment is Made
+                ✅ I Have Paid - Confirm Now
             </button>
             
-            <div class="payment-info">
-                <strong>Note:</strong> Click the button only after successful UPI payment
+            <div class="payment-info" style="margin-top: 10px;">
+                <strong>⚡ You'll get 2 confirmation emails with Order ID</strong><br>
+                <small>We'll verify payment using your UPI ID</small>
             </div>
         </div>
         
@@ -315,7 +341,7 @@
         let formSubmitted = false;
         let formData = {};
         
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrMz9FGM5loJi93HE5Biss5rffI2wbUlDQ50Rrxe0yPibVJ7Y6ump6FaxzOUoWqS7Qvg/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVATpKaJgxjJNOH7jzw_2AdPAdYw6_ZITCeVSlLXSLCSp-xdDhac7vhHxZBIIhcwFMQg/exec';
         
         function showStatus(message, type) {
             const status = document.getElementById('status');
@@ -323,20 +349,6 @@
             status.textContent = message;
             status.style.display = 'block';
             setTimeout(() => { status.style.display = 'none'; }, 8000);
-        }
-        
-        function disableAllButtons() {
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('buyNowBtn').disabled = true;
-            const paymentBtn = document.getElementById('paymentDoneBtn');
-            if (paymentBtn) paymentBtn.disabled = true;
-        }
-        
-        function enableAllButtons() {
-            document.getElementById('submitBtn').disabled = false;
-            document.getElementById('buyNowBtn').disabled = false;
-            const paymentBtn = document.getElementById('paymentDoneBtn');
-            if (paymentBtn) paymentBtn.disabled = false;
         }
         
         // ============================================
@@ -356,7 +368,8 @@
             formSubmitted = true;
             
             document.getElementById('submitBtn').textContent = 'Sending...';
-            disableAllButtons();
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('buyNowBtn').disabled = true;
             
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
@@ -374,11 +387,12 @@
                 showStatus('✅ Form submitted! Thank you email sent to ' + email, 'success');
                 document.getElementById('submitBtn').textContent = '✅ Submitted';
                 document.getElementById('submitBtn').disabled = true;
-                document.getElementById('buyNowBtn').disabled = false;  // Allow buy after submit
+                document.getElementById('buyNowBtn').disabled = false;
                 
             } catch (error) {
                 showStatus('❌ Error. Please try again.', 'error');
-                enableAllButtons();
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('buyNowBtn').disabled = false;
                 document.getElementById('submitBtn').textContent = '📨 Submit';
                 console.error('Error:', error);
             }
@@ -388,7 +402,6 @@
         // BUY NOW BUTTON - Scenario 2
         // ============================================
         async function handleBuyClick() {
-            // If form not submitted yet, submit it first
             if (!formSubmitted) {
                 const name = document.getElementById('name').value.trim();
                 const email = document.getElementById('email').value.trim();
@@ -402,9 +415,9 @@
                 formData = { name, email, message };
                 formSubmitted = true;
                 
-                // Submit form first
                 document.getElementById('submitBtn').textContent = 'Sending...';
-                disableAllButtons();
+                document.getElementById('submitBtn').disabled = true;
+                document.getElementById('buyNowBtn').disabled = true;
                 
                 try {
                     await fetch(GOOGLE_SCRIPT_URL, {
@@ -427,7 +440,6 @@
                 }
             }
             
-            // Now send buy_clicked notification
             document.getElementById('buyNowBtn').textContent = 'Processing...';
             document.getElementById('buyNowBtn').disabled = true;
             
@@ -452,9 +464,10 @@
                 qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=8275679175@upi&pn=Sushant&am=500&cu=INR`;
                 qrImage.style.display = 'block';
                 
-                showStatus('📱 Scan QR or pay to UPI ID above', 'info');
+                showStatus('📱 Pay via UPI, enter YOUR UPI ID, then click Confirm', 'info');
                 document.getElementById('buyNowBtn').textContent = '💳 Buy Now - ₹500';
                 document.getElementById('buyNowBtn').disabled = true;
+                document.getElementById('paymentDoneBtn').disabled = false;
                 
             } catch (error) {
                 showStatus('❌ Error. Please try again.', 'error');
@@ -465,11 +478,30 @@
         }
         
         // ============================================
-        // I HAVE PAID BUTTON - Scenario 3
+        // I HAVE PAID BUTTON - Scenario 3 (with User's UPI ID)
         // ============================================
         async function handlePaymentDone() {
+            if (!formData.email) {
+                showStatus('⚠️ Please fill and submit the form first!', 'error');
+                return;
+            }
+            
+            const userUpiId = document.getElementById('userUpiId').value.trim();
+            
+            if (!userUpiId) {
+                showStatus('⚠️ Please enter YOUR UPI ID first!', 'error');
+                document.getElementById('userUpiId').focus();
+                return;
+            }
+            
+            // Basic UPI ID validation (contains @)
+            if (!userUpiId.includes('@')) {
+                showStatus('⚠️ Please enter a valid UPI ID (e.g., name@okaxis)', 'error');
+                return;
+            }
+            
             const paymentBtn = document.getElementById('paymentDoneBtn');
-            paymentBtn.textContent = 'Verifying Payment...';
+            paymentBtn.textContent = 'Processing...';
             paymentBtn.disabled = true;
             
             try {
@@ -481,25 +513,26 @@
                         name: formData.name,
                         email: formData.email,
                         message: formData.message,
-                        action: 'payment_done'
+                        action: 'payment_done',
+                        userUpiId: userUpiId  // Send user's UPI ID
                     })
                 });
                 
-                // Generate mock Order ID to show (real one is in email)
                 const mockOrderId = 'ORD-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + 
                                    Math.random().toString(36).substring(2, 7).toUpperCase();
                 
                 const orderDisplay = document.getElementById('orderIdDisplay');
-                orderDisplay.innerHTML = `🎉 Payment Confirmed!<br>Order ID: <strong>${mockOrderId}</strong><br><small>2 confirmation emails sent to ${formData.email}</small>`;
+                orderDisplay.innerHTML = `🎉 Payment Confirmed!<br>Order ID: <strong>${mockOrderId}</strong><br>Paid from: <strong>${userUpiId}</strong><br><small>2 confirmation emails sent to ${formData.email}</small>`;
                 orderDisplay.style.display = 'block';
                 
-                showStatus('✅ Payment confirmed! Check your email (2 emails sent)', 'success');
+                showStatus('✅ Payment confirmed! Check your email for Order ID.', 'success');
                 paymentBtn.textContent = '✅ Payment Completed';
+                paymentBtn.disabled = true;
                 
             } catch (error) {
                 showStatus('❌ Error. Please try again.', 'error');
                 paymentBtn.disabled = false;
-                paymentBtn.textContent = '✅ Click Here When Payment is Made';
+                paymentBtn.textContent = '✅ I Have Paid - Confirm Now';
                 console.error('Error:', error);
             }
         }
