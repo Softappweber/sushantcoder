@@ -422,9 +422,9 @@
     }
     .subtitle {
       text-align: center;
-      color: var(--text-muted);
+      color: blue;
       margin-bottom: 30px;
-      font-size: 14px;
+      font-size: 16px;
     }
     .form-group {
       margin-bottom: 20px;
@@ -495,6 +495,7 @@
     .divider::before { margin-right: 15px; }
     .divider::after { margin-left: 15px; }
 
+    /* FIXED: Pay Now button is now clickable */
     .payment-btn {
       width: 100%;
       padding: 16px;
@@ -504,13 +505,23 @@
       border-radius: 10px;
       font-size: 18px;
       font-weight: 700;
-      cursor: default;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
       margin-bottom: 10px;
-      transition: background 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .payment-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px var(--payment-btn-shadow);
+    }
+    .payment-btn:disabled {
+      background: var(--btn-disabled-bg);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     .upi-id {
@@ -750,10 +761,10 @@
       
       <div class="divider">OR</div>
       
-      <!-- PAY NOW BUTTON -->
-      <div class="payment-btn" style="cursor: default; margin-bottom: 18px;">
+      <!-- PAY NOW BUTTON - NOW CLICKABLE -->
+      <button class="payment-btn" onclick="handlePayNow()" id="payNowBtn">
         💳 Pay Now - ₹500
-      </div>
+      </button>
       
       <!-- UPI SECTION -->
       <div id="upiSection" style="display: block; margin-top: 20px;">
@@ -846,7 +857,7 @@
       status.className = type;
       status.textContent = message;
       status.style.display = 'block';
-      setTimeout(() => { status.style.display = 'none'; }, 8000);
+      setTimeout(() => { status.style.display = 'none'; }, 5000);
     }
 
     // Submit Form
@@ -884,12 +895,47 @@
         btn.textContent = '✅ Submitted';
         btn.disabled = true;
         
+        // Enable the Pay Now button after form submission
+        document.getElementById('payNowBtn').disabled = false;
+        
       } catch (error) {
         showStatus('❌ Error. Please try again.', 'error');
         btn.disabled = false;
         btn.textContent = '📨 Submit';
         console.error('Error:', error);
       }
+    }
+
+    // NEW: Handle Pay Now button click
+    function handlePayNow() {
+      // Check if form is submitted
+      if (!formData.email) {
+        showStatus('⚠️ Please submit the contact form first!', 'error');
+        document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      
+      // Check if UPI ID is entered
+      const userUpiId = document.getElementById('userUpiId').value.trim();
+      if (!userUpiId) {
+        showStatus('⚠️ Please enter your UPI ID first!', 'error');
+        document.getElementById('userUpiId').focus();
+        return;
+      }
+      
+      if (!userUpiId.includes('@')) {
+        showStatus('⚠️ Please enter a valid UPI ID (e.g., name@okaxis)', 'error');
+        return;
+      }
+      
+      // If all checks pass, scroll to the confirm button and highlight it
+      document.getElementById('paymentDoneBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('paymentDoneBtn').style.transform = 'scale(1.05)';
+      setTimeout(() => {
+        document.getElementById('paymentDoneBtn').style.transform = 'scale(1)';
+      }, 500);
+      
+      showStatus('✅ UPI ID verified! Click "I Have Paid - Confirm Now" after making the payment.', 'success');
     }
 
     // Handle Payment Done
@@ -977,12 +1023,21 @@
       document.getElementById('paymentDoneBtn').textContent = '✅ I Have Paid - Confirm Now';
       document.getElementById('paymentDoneBtn').disabled = false;
       document.getElementById('userUpiId').value = '';
+      // Disable Pay Now button again
+      document.getElementById('payNowBtn').disabled = true;
+      // Reset form submitted flag
+      formSubmitted = false;
+      formData = {};
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('submitBtn').textContent = '📨 Submit';
     }
 
     // QR fallback
     document.addEventListener('DOMContentLoaded', function() {
       const qr = document.getElementById('qrImage');
       if (qr) qr.src = 'qrimage.png';
+      // Initially disable Pay Now button
+      document.getElementById('payNowBtn').disabled = true;
     });
   </script>
 </body>
