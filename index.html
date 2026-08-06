@@ -1,546 +1,989 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buy Now - Free & Easy</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: slideUp 0.5s ease;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-        
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        input, textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-            font-family: inherit;
-        }
-        
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        textarea {
-            height: 100px;
-            resize: vertical;
-        }
-        
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-bottom: 10px;
-        }
-        
-        .submit-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .submit-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 25px 0;
-            color: #999;
-            font-size: 14px;
-        }
-        
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #ddd;
-        }
-        
-        .divider::before { margin-right: 15px; }
-        .divider::after { margin-left: 15px; }
-        
-        .payment-btn {
-            width: 100%;
-            padding: 16px;
-            background: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .payment-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.4);
-        }
-        
-        .payment-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .upi-id {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            font-family: monospace;
-            font-size: 18px;
-            color: #333;
-            margin-top: 10px;
-            border: 1px dashed #667eea;
-        }
-        
-        .confirm-payment-btn {
-            width: 100%;
-            padding: 16px;
-            background: #e67e22;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 15px;
-        }
-        
-        .confirm-payment-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(230, 126, 34, 0.4);
-        }
-        
-        .confirm-payment-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .payment-info {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 13px;
-            color: #888;
-        }
-        
-        .payment-info strong {
-            color: #333;
-        }
-        
-        #status {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 600;
-            display: none;
-        }
-        
-        #status.success {
-            display: block;
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        #status.error {
-            display: block;
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        #status.info {
-            display: block;
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .order-id-display {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            color: #856404;
-            margin-top: 15px;
-            border: 2px solid #ffc107;
-            display: none;
-        }
-        
-        .helper-text {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
-        }
-        
-        .highlight-box {
-            background: #fff9e6;
-            border: 1px solid #ffd700;
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 10px;
-            font-size: 13px;
-            color: #856404;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>Buy Now · Free & Easy</title>
+  <style>
+    /* ----- RESET & BASE ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: background 0.3s ease, color 0.2s;
+    }
+
+    /* ----- THEME VARIABLES (default: "original" – vibrant) ----- */
+    body {
+      --bg-gradient-start: #667eea;
+      --bg-gradient-end: #764ba2;
+      --card-bg: #ffffff;
+      --card-shadow: 0 20px 60px rgba(0,0,0,0.30);
+      --text-primary: #1e1e2f;
+      --text-secondary: #3b3b5c;
+      --text-muted: #6b6b8a;
+      --border-light: #eaeaef;
+      --input-border: #d0d0dd;
+      --input-focus: #667eea;
+      --btn-gradient-start: #667eea;
+      --btn-gradient-end: #764ba2;
+      --btn-shadow: rgba(102, 126, 234, 0.4);
+      --payment-btn-bg: #2ecc71;
+      --payment-btn-shadow: rgba(46, 204, 113, 0.4);
+      --confirm-btn-bg: #e67e22;
+      --confirm-btn-shadow: rgba(230, 126, 34, 0.4);
+      --upi-bg: #f4f6fc;
+      --upi-border: #667eea;
+      --highlight-bg: #fff9e6;
+      --highlight-border: #ffd700;
+      --status-success-bg: #d4edda;
+      --status-success-text: #155724;
+      --status-error-bg: #f8d7da;
+      --status-error-text: #721c24;
+      --status-info-bg: #d1ecf1;
+      --status-info-text: #0c5460;
+      --order-bg: #fff3cd;
+      --order-border: #ffc107;
+      --order-text: #856404;
+      --divider-color: #d0d0dd;
+      --scrollbar-thumb: #c0c0d0;
+      --qr-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      --btn-disabled-bg: #c0c0ce;
+      --thankyou-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --thankyou-text: #fff;
+      --thankyou-card: rgba(255,255,255,0.15);
+      --thankyou-border: rgba(255,255,255,0.3);
+    }
+
+    /* ----- THEME 1: DARK BLUE ----- */
+    body.theme-darkblue {
+      --bg-gradient-start: #0b1a33;
+      --bg-gradient-end: #1a3a5c;
+      --card-bg: #f0f4fe;
+      --card-shadow: 0 20px 60px rgba(0,0,0,0.50);
+      --text-primary: #0b1f33;
+      --text-secondary: #1e3b5a;
+      --text-muted: #3a5a7a;
+      --border-light: #b8cce0;
+      --input-border: #8aa4c0;
+      --input-focus: #1f5a8a;
+      --btn-gradient-start: #1f5a8a;
+      --btn-gradient-end: #0f3b5c;
+      --btn-shadow: rgba(26, 74, 120, 0.5);
+      --payment-btn-bg: #1f7a5a;
+      --payment-btn-shadow: rgba(26, 120, 80, 0.4);
+      --confirm-btn-bg: #b85a1a;
+      --confirm-btn-shadow: rgba(180, 80, 20, 0.4);
+      --upi-bg: #e3ecf5;
+      --upi-border: #1f5a8a;
+      --highlight-bg: #e5edf5;
+      --highlight-border: #7a9fc0;
+      --status-success-bg: #c8e6d9;
+      --status-success-text: #0f3d2a;
+      --status-error-bg: #f5d0cc;
+      --status-error-text: #6b2a1f;
+      --status-info-bg: #cce0ed;
+      --status-info-text: #1a3d5a;
+      --order-bg: #d6e2ed;
+      --order-border: #5a7f9a;
+      --order-text: #1a3a52;
+      --divider-color: #9ab0c8;
+      --scrollbar-thumb: #8aa4c0;
+      --qr-shadow: 0 4px 12px rgba(0,20,40,0.15);
+      --btn-disabled-bg: #9ab0c8;
+      --thankyou-bg: linear-gradient(135deg, #0b1a33 0%, #1a3a5c 100%);
+      --thankyou-text: #e8f0fe;
+      --thankyou-card: rgba(255,255,255,0.10);
+      --thankyou-border: rgba(255,255,255,0.2);
+    }
+
+    /* ----- THEME 2: LIGHT (soft neutral) ----- */
+    body.theme-light {
+      --bg-gradient-start: #dce3ed;
+      --bg-gradient-end: #c8d2e0;
+      --card-bg: #ffffff;
+      --card-shadow: 0 20px 40px rgba(0,0,0,0.08);
+      --text-primary: #222233;
+      --text-secondary: #3a3a52;
+      --text-muted: #6a6a82;
+      --border-light: #d8dce6;
+      --input-border: #c8cedb;
+      --input-focus: #5a7a9a;
+      --btn-gradient-start: #5a7a9a;
+      --btn-gradient-end: #3a5a7a;
+      --btn-shadow: rgba(70, 100, 140, 0.25);
+      --payment-btn-bg: #3a9a7a;
+      --payment-btn-shadow: rgba(50, 140, 100, 0.25);
+      --confirm-btn-bg: #c07a3a;
+      --confirm-btn-shadow: rgba(180, 110, 40, 0.25);
+      --upi-bg: #f2f5fa;
+      --upi-border: #5a7a9a;
+      --highlight-bg: #f5f7fc;
+      --highlight-border: #b0c4da;
+      --status-success-bg: #d4e8da;
+      --status-success-text: #1a4a3a;
+      --status-error-bg: #f0d8d4;
+      --status-error-text: #6a3a2a;
+      --status-info-bg: #d4e4f0;
+      --status-info-text: #1a3a5a;
+      --order-bg: #e8edf5;
+      --order-border: #a0b8d0;
+      --order-text: #2a4a6a;
+      --divider-color: #c8d0dc;
+      --scrollbar-thumb: #b0bcca;
+      --qr-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      --btn-disabled-bg: #b8c4d4;
+      --thankyou-bg: linear-gradient(135deg, #dce3ed 0%, #c8d2e0 100%);
+      --thankyou-text: #1a2a3a;
+      --thankyou-card: rgba(255,255,255,0.5);
+      --thankyou-border: rgba(255,255,255,0.6);
+    }
+
+    /* ----- THEME 4: ORIGINAL (vibrant) – default ----- */
+    body.theme-original {
+      --bg-gradient-start: #667eea;
+      --bg-gradient-end: #764ba2;
+      --card-bg: #ffffff;
+      --card-shadow: 0 20px 60px rgba(0,0,0,0.30);
+      --text-primary: #1e1e2f;
+      --text-secondary: #3b3b5c;
+      --text-muted: #6b6b8a;
+      --border-light: #eaeaef;
+      --input-border: #d0d0dd;
+      --input-focus: #667eea;
+      --btn-gradient-start: #667eea;
+      --btn-gradient-end: #764ba2;
+      --btn-shadow: rgba(102, 126, 234, 0.4);
+      --payment-btn-bg: #2ecc71;
+      --payment-btn-shadow: rgba(46, 204, 113, 0.4);
+      --confirm-btn-bg: #e67e22;
+      --confirm-btn-shadow: rgba(230, 126, 34, 0.4);
+      --upi-bg: #f4f6fc;
+      --upi-border: #667eea;
+      --highlight-bg: #fff9e6;
+      --highlight-border: #ffd700;
+      --status-success-bg: #d4edda;
+      --status-success-text: #155724;
+      --status-error-bg: #f8d7da;
+      --status-error-text: #721c24;
+      --status-info-bg: #d1ecf1;
+      --status-info-text: #0c5460;
+      --order-bg: #fff3cd;
+      --order-border: #ffc107;
+      --order-text: #856404;
+      --divider-color: #d0d0dd;
+      --scrollbar-thumb: #c0c0d0;
+      --qr-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      --btn-disabled-bg: #c0c0ce;
+      --thankyou-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --thankyou-text: #fff;
+      --thankyou-card: rgba(255,255,255,0.15);
+      --thankyou-border: rgba(255,255,255,0.3);
+    }
+
+    /* apply theme variables */
+    body {
+      background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+      color: var(--text-primary);
+    }
+
+    /* ----- MAIN CONTAINER ----- */
+    .container {
+      position: relative;
+      background: var(--card-bg);
+      box-shadow: var(--card-shadow);
+      border-radius: 24px;
+      padding: 30px 30px 20px 30px;
+      width: min(94vw, 1200px);
+      max-width: 1200px;
+      height: min(88vh, 780px);
+      min-height: 560px;
+      animation: slideUp 0.45s ease;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 30px;
+      overflow: hidden;
+      transition: background 0.25s, box-shadow 0.25s;
+    }
+
+    .panel {
+      min-width: 0;
+      height: 100%;
+      min-height: 0;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      padding-right: 4px;
+    }
+    .panel::-webkit-scrollbar {
+      width: 5px;
+    }
+    .panel::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 10px;
+    }
+
+    .payment-panel {
+      border-left: 1px solid var(--border-light);
+      padding-left: 30px;
+      transition: border-color 0.2s;
+    }
+    .contact-panel {
+      padding-right: 8px;
+    }
+
+    /* ----- ORDER MESSAGE ----- */
+    .order-id-display {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 700px;
+      background: var(--order-bg);
+      padding: 14px 20px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--order-text);
+      border: 2px solid var(--order-border);
+      display: none;
+      transition: background 0.2s, border 0.2s, color 0.2s;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      z-index: 10;
+      line-height: 1.5;
+      backdrop-filter: blur(4px);
+    }
+    .order-id-display strong {
+      font-weight: 800;
+    }
+    .order-id-display small {
+      font-weight: 400;
+      font-size: 0.85em;
+      opacity: 0.8;
+    }
+    .order-id-display .ok-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 28px;
+      background: linear-gradient(135deg, var(--btn-gradient-start), var(--btn-gradient-end));
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .order-id-display .ok-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ----- BEAUTIFUL THANK YOU OVERLAY ----- */
+    .thankyou-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: fadeIn 0.5s ease;
+      padding: 20px;
+    }
+    .thankyou-overlay.active {
+      display: flex;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .thankyou-card {
+      background: var(--thankyou-bg);
+      border-radius: 40px;
+      padding: 50px 60px;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      color: var(--thankyou-text);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+      border: 1px solid var(--thankyou-border);
+      position: relative;
+      overflow: hidden;
+      animation: floatUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .thankyou-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .thankyou-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      display: block;
+      animation: bounce 1s ease infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .thankyou-card h2 {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+      position: relative;
+    }
+    .thankyou-card p {
+      font-size: 18px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+      line-height: 1.6;
+      position: relative;
+    }
+    .thankyou-card .order-ref {
+      background: var(--thankyou-card);
+      padding: 12px 20px;
+      border-radius: 16px;
+      margin: 20px 0;
+      font-size: 20px;
+      font-weight: 700;
+      border: 1px solid var(--thankyou-border);
+      backdrop-filter: blur(4px);
+      position: relative;
+    }
+    .thankyou-card .order-ref span {
+      font-weight: 400;
+      font-size: 16px;
+      opacity: 0.8;
+      display: block;
+      margin-top: 4px;
+    }
+    .thankyou-card .close-thankyou {
+      margin-top: 25px;
+      padding: 14px 40px;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.4);
+      color: var(--thankyou-text);
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      backdrop-filter: blur(4px);
+      position: relative;
+    }
+    .thankyou-card .close-thankyou:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.05);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+
+    /* rest of styling */
+    h1 {
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 28px;
+      transition: color 0.2s;
+    }
+    .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid var(--input-border);
+      border-radius: 10px;
+      font-size: 14px;
+      transition: border-color 0.3s, background 0.2s;
+      font-family: inherit;
+      background: var(--card-bg);
+      color: var(--text-primary);
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--input-focus);
+    }
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--btn-gradient-start) 0%, var(--btn-gradient-end) 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      margin-bottom: 10px;
+    }
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px var(--btn-shadow);
+    }
+    .submit-btn:disabled {
+      background: var(--btn-disabled-bg);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 25px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--divider-color);
+    }
+    .divider::before { margin-right: 15px; }
+    .divider::after { margin-left: 15px; }
+
+    .payment-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--payment-btn-bg);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: default;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .upi-id {
+      background: var(--upi-bg);
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-family: monospace;
+      font-size: 18px;
+      color: var(--text-primary);
+      margin-top: 10px;
+      border: 1px dashed var(--upi-border);
+      transition: background 0.2s, border 0.2s;
+      overflow-wrap: anywhere;
+    }
+
+    .confirm-payment-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--confirm-btn-bg);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      margin-top: 15px;
+    }
+    .confirm-payment-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px var(--confirm-btn-shadow);
+    }
+    .confirm-payment-btn:disabled {
+      background: var(--btn-disabled-bg);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .payment-info {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .payment-info strong { color: var(--text-secondary); }
+
+    #status {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    #status.success {
+      display: block;
+      background: var(--status-success-bg);
+      color: var(--status-success-text);
+      border: 1px solid var(--status-success-text);
+    }
+    #status.error {
+      display: block;
+      background: var(--status-error-bg);
+      color: var(--status-error-text);
+      border: 1px solid var(--status-error-text);
+    }
+    #status.info {
+      display: block;
+      background: var(--status-info-bg);
+      color: var(--status-info-text);
+      border: 1px solid var(--status-info-text);
+    }
+
+    .helper-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    .highlight-box {
+      background: var(--highlight-bg);
+      border: 1px solid var(--highlight-border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      transition: background 0.2s, border 0.2s;
+    }
+
+    #qrImage {
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: var(--qr-shadow);
+      transition: box-shadow 0.2s;
+      margin: 10px auto;
+      display: block;
+    }
+
+    /* ----- THEME TOGGLE ----- */
+    .theme-switcher {
+      position: fixed;
+      top: 18px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(8px);
+      padding: 8px 14px;
+      border-radius: 60px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      z-index: 999;
+      border: 1px solid rgba(255,255,255,0.3);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .theme-btn {
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.2s;
+      color: #1e1e2f;
+      background: rgba(255,255,255,0.5);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+      letter-spacing: 0.3px;
+    }
+    .theme-btn:hover {
+      background: rgba(255,255,255,0.9);
+      transform: scale(0.97);
+    }
+    .theme-btn.active {
+      background: #1e1e2f;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    body.theme-darkblue .theme-btn.active-darkblue { background: #1f5a8a; color: white; }
+    body.theme-light .theme-btn.active-light { background: #5a7a9a; color: white; }
+    body.theme-original .theme-btn.active-original { background: #667eea; color: white; }
+
+    /* responsive */
+    @media (max-width: 600px) {
+      body { padding: 12px; align-items: flex-start; }
+      .container {
+        margin: 8px 0;
+        padding: 22px 16px 70px 16px;
+        border-radius: 16px;
+        max-width: 100%;
+        height: auto;
+        min-height: 0;
+        grid-template-columns: 1fr;
+        gap: 22px;
+        overflow: visible;
+      }
+      .payment-panel {
+        border-left: 0;
+        border-top: 1px solid var(--border-light);
+        padding-left: 0;
+        padding-top: 22px;
+        overflow: visible;
+      }
+      .contact-panel { overflow: visible; }
+      h1 { font-size: 24px; }
+      input, textarea { font-size: 16px; padding: 13px 14px; }
+      .submit-btn, .payment-btn, .confirm-payment-btn { min-height: 52px; font-size: 16px; }
+      #qrImage { width: min(180px, 70vw); height: min(180px, 70vw); }
+      .upi-id { font-size: 16px; }
+      .theme-switcher { top: 12px; right: 12px; padding: 6px 12px; gap: 4px; }
+      .theme-btn { font-size: 12px; padding: 4px 10px; }
+      .order-id-display {
+        bottom: 8px;
+        width: 92%;
+        font-size: 15px;
+        padding: 12px 12px;
+      }
+      .thankyou-card {
+        padding: 35px 25px;
+        border-radius: 28px;
+      }
+      .thankyou-card h2 { font-size: 32px; }
+      .thankyou-icon { font-size: 60px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+
+    .panel { scrollbar-width: thin; }
+  </style>
+  <link rel="preload" as="image" href="qrimage.png">
 </head>
-<body>
-    <div class="container">
-        <h1>📧 Contact & Buy</h1>
-        <p class="subtitle">Fill the form, then pay securely via UPI</p>
-        
-        <!-- CONTACT FORM -->
-        <form id="contactForm">
-            <div class="form-group">
-                <label>Your Name</label>
-                <input type="text" id="name" placeholder="John Doe" required>
-            </div>
-            
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="email" placeholder="john@example.com" required>
-            </div>
-            
-            <div class="form-group">
-                <label>Message</label>
-                <textarea id="message" placeholder="Tell me what you need..." required></textarea>
-            </div>
-            
-            <!-- SUBMIT BUTTON -->
-            <button type="button" onclick="submitForm()" class="submit-btn" id="submitBtn">
-                📨 Submit
-            </button>
-        </form>
-        
-        <div id="status"></div>
-        
-        <div class="divider">OR</div>
-        
-        <!-- BUY NOW BUTTON -->
-        <button class="payment-btn" onclick="handleBuyClick()" id="buyNowBtn">
-            💳 Buy Now - ₹500
-        </button>
-        
-        <!-- UPI SECTION (Hidden until Buy Now clicked) -->
-        <div id="upiSection" style="display: none; margin-top: 20px;">
-            <div class="upi-id">
-                📱 Pay to UPI ID: <strong>8275679175@upi</strong>
-            </div>
-            <div style="text-align: center; margin-top: 15px;">
-                <p style="font-size: 14px; color: #666;">Scan QR or pay to above UPI ID</p>
-                <img id="qrImage" src="qrimage.png" alt="QR Code" style="max-width: 200px; margin-top: 10px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none;">
-            </div>
-            
-            <!-- USER'S UPI ID INPUT -->
-            <div class="form-group" style="margin-top: 20px;">
-                <label>📱 Your UPI ID (from which you paid)</label>
-                <input type="text" id="userUpiId" placeholder="e.g., yourname@okhdfcbank" style="font-family: monospace;">
-                <p class="helper-text">📍 Enter the UPI ID you used to send the payment</p>
-            </div>
-            
-            <!-- HOW TO FIND UPI ID HELP -->
-            <div class="highlight-box">
-                <strong>💡 How to find your UPI ID:</strong><br>
-                • Open Google Pay / PhonePe / BHIM<br>
-                • Tap your profile picture<br>
-                • You'll see your UPI ID (e.g., name@okaxis)<br>
-                • Enter that exact ID above
-            </div>
-            
-            <!-- I HAVE PAID BUTTON -->
-            <button class="confirm-payment-btn" onclick="handlePaymentDone()" id="paymentDoneBtn">
-                ✅ I Have Paid - Confirm Now
-            </button>
-            
-            <div class="payment-info" style="margin-top: 10px;">
-                <strong>⚡ You'll get 2 confirmation emails with Order ID</strong><br>
-                <small>We'll verify payment using your UPI ID</small>
-            </div>
+<body class="theme-original">
+
+  <!-- THEME SWITCHER -->
+  <div class="theme-switcher">
+    <button class="theme-btn active-original" data-theme="original" onclick="setTheme('original')">✦ Original</button>
+    <button class="theme-btn" data-theme="darkblue" onclick="setTheme('darkblue')">🌙 Dark Blue</button>
+    <button class="theme-btn" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+  </div>
+
+  <div class="container">
+    <!-- LEFT: CONTACT -->
+    <section class="panel contact-panel">
+      <h1>📧 Contact & Buy</h1>
+      <p class="subtitle">Fill the form, then pay securely via UPI</p>
+      <form id="contactForm" onsubmit="return false;">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="name" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea id="message" placeholder="Tell me what you need..." required></textarea>
+        </div>
+        <button type="button" onclick="submitForm()" class="submit-btn" id="submitBtn">📨 Submit</button>
+      </form>
+      <div id="status"></div>
+    </section>
+
+    <!-- RIGHT: PAYMENT -->
+    <section class="panel payment-panel">
+      <h1>💳 Payment</h1>
+      <p class="subtitle">Pay securely via UPI</p>
+      
+      <div class="divider">OR</div>
+      
+      <!-- PAY NOW BUTTON -->
+      <div class="payment-btn" style="cursor: default; margin-bottom: 18px;">
+        💳 Pay Now - ₹500
+      </div>
+      
+      <!-- UPI SECTION -->
+      <div id="upiSection" style="display: block; margin-top: 20px;">
+        <div class="upi-id">
+          📱 Pay to UPI ID: <strong>8275679175@upi</strong>
         </div>
         
-        <!-- Order ID Display -->
-        <div id="orderIdDisplay" class="order-id-display"></div>
-    </div>
-    
-    <script>
-        let formSubmitted = false;
-        let formData = {};
+        <!-- QR CODE -->
+        <div style="text-align: center; margin-top: 15px;">
+          <p style="font-size: 14px; color: var(--text-muted);">Scan QR or pay to above UPI ID</p>
+          <img id="qrImage" src="qrimage.png" alt="UPI Payment QR Code">
+        </div>
         
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYTDmfJjMahenio8L4Otud-9Qy_4VBqQMKGFK5nXqmSUjtXuuOssiSMCgUSwpjAF2AQg/exec';
+        <!-- USER'S UPI ID INPUT -->
+        <div class="form-group" style="margin-top: 20px;">
+          <label>📱 Your UPI ID (from which you paid)</label>
+          <input type="text" id="userUpiId" placeholder="e.g., yourname@okhdfcbank" style="font-family: monospace;">
+          <p class="helper-text">📍 Enter the UPI ID you used to send the payment</p>
+        </div>
         
-        function showStatus(message, type) {
-            const status = document.getElementById('status');
-            status.className = type;
-            status.textContent = message;
-            status.style.display = 'block';
-            setTimeout(() => { status.style.display = 'none'; }, 8000);
-        }
+        <!-- HELP BOX -->
+        <div class="highlight-box">
+          <strong>💡 How to find your UPI ID:</strong><br>
+          • Open Google Pay / PhonePe / BHIM<br>
+          • Tap your profile picture<br>
+          • You'll see your UPI ID (e.g., name@okaxis)<br>
+          • Enter that exact ID above
+        </div>
         
-        // ============================================
-        // SUBMIT BUTTON - Scenario 1
-        // ===========================================
-        async function submitForm() {
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const message = document.getElementById('message').value.trim();
-            
-            if (!name || !email || !message) {
-                showStatus('⚠️ Please fill all fields!', 'error');
-                return;
-            }
-            
-            formData = { name, email, message };
-            formSubmitted = true;
-            
-            document.getElementById('submitBtn').textContent = 'Sending...';
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('buyNowBtn').disabled = true;
-            
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        name: name,
-                        email: email,
-                        message: message,
-                        action: 'form_submitted'
-                    })
-                });
-                
-                showStatus('✅ Form submitted! Thank you email sent to ' + email, 'success');
-                document.getElementById('submitBtn').textContent = '✅ Submitted';
-                document.getElementById('submitBtn').disabled = true;
-                document.getElementById('buyNowBtn').disabled = false;
-                
-            } catch (error) {
-                showStatus('❌ Error. Please try again.', 'error');
-                document.getElementById('submitBtn').disabled = false;
-                document.getElementById('buyNowBtn').disabled = false;
-                document.getElementById('submitBtn').textContent = '📨 Submit';
-                console.error('Error:', error);
-            }
-        }
+        <!-- CONFIRM PAYMENT BUTTON -->
+        <button class="confirm-payment-btn" onclick="handlePaymentDone()" id="paymentDoneBtn">
+          ✅ I Have Paid - Confirm Now
+        </button>
         
-        // ============================================
-        // BUY NOW BUTTON - Scenario 2
-        // ============================================
-        async function handleBuyClick() {
-            if (!formSubmitted) {
-                const name = document.getElementById('name').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const message = document.getElementById('message').value.trim();
-                
-                if (!name || !email || !message) {
-                    showStatus('⚠️ Please fill the form first!', 'error');
-                    return;
-                }
-                
-                formData = { name, email, message };
-                formSubmitted = true;
-                
-                document.getElementById('submitBtn').textContent = 'Sending...';
-                document.getElementById('submitBtn').disabled = true;
-                document.getElementById('buyNowBtn').disabled = true;
-                
-                try {
-                    await fetch(GOOGLE_SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({
-                            name: name,
-                            email: email,
-                            message: message,
-                            action: 'form_submitted'
-                        })
-                    });
-                    
-                    document.getElementById('submitBtn').textContent = '✅ Submitted';
-                    document.getElementById('submitBtn').disabled = true;
-                    
-                } catch (error) {
-                    console.error('Error:', error);
-                }
-            }
-            
-            document.getElementById('buyNowBtn').textContent = 'Processing...';
-            document.getElementById('buyNowBtn').disabled = true;
-            
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        name: formData.name,
-                        email: formData.email,
-                        message: formData.message,
-                        action: 'buy_clicked'
-                    })
-                });
-                
-                // Show UPI section
-                document.getElementById('upiSection').style.display = 'block';
-                
-                // Generate QR
-               // const qrImage = document.getElementById('qrImage');
-                //qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=8275679175@upi&pn=Sushant&am=500&cu=INR`;
-                //qrImage.style.display = 'block';
+        <div class="payment-info" style="margin-top: 10px;">
+          <strong>⚡ You'll get 2 confirmation emails with Order ID</strong><br>
+          <small>We'll use your UPI ID for payment verification</small>
+        </div>
+      </div>
+    </section>
 
-                // Display original UPI QR
-const qrImage = document.getElementById('qrImage');
-qrImage.src = 'qrimage.png';
-qrImage.style.display = 'block';
-                
-                showStatus('📱 Pay via UPI, enter YOUR UPI ID, then click Confirm', 'info');
-                document.getElementById('buyNowBtn').textContent = '💳 Buy Now - ₹500';
-                document.getElementById('buyNowBtn').disabled = true;
-                document.getElementById('paymentDoneBtn').disabled = false;
-                
-            } catch (error) {
-                showStatus('❌ Error. Please try again.', 'error');
-                document.getElementById('buyNowBtn').disabled = false;
-                document.getElementById('buyNowBtn').textContent = '💳 Buy Now - ₹500';
-                console.error('Error:', error);
-            }
+    <!-- ORDER CONFIRMATION -->
+    <div id="orderIdDisplay" class="order-id-display"></div>
+  </div>
+
+  <!-- BEAUTIFUL THANK YOU OVERLAY -->
+  <div class="thankyou-overlay" id="thankyouOverlay">
+    <div class="thankyou-card">
+      <span class="thankyou-icon">🎉</span>
+      <h2>Thank You!</h2>
+      <p>Your payment has been successfully submitted.</p>
+      <p style="font-size: 15px; opacity: 0.8;">You'll receive 2 confirmation emails shortly.</p>
+      <div class="order-ref" id="thankyouOrderRef">
+        Order #<span id="thankyouOrderId">---</span>
+        <span>Paid from: <span id="thankyouUpiId">---</span></span>
+      </div>
+      <button class="close-thankyou" onclick="closeThankYou()">✨ Done</button>
+    </div>
+  </div>
+
+  <script>
+    // THEME SWITCHING
+    function setTheme(theme) {
+      document.body.className = 'theme-' + theme;
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.remove('active', 'active-darkblue', 'active-light', 'active-original');
+        if (btn.dataset.theme === theme) {
+          btn.classList.add('active', 'active-' + theme);
         }
+      });
+      localStorage.setItem('preferredTheme', theme);
+    }
+
+    (function loadTheme() {
+      const saved = localStorage.getItem('preferredTheme');
+      if (saved && ['original','darkblue','light'].includes(saved)) {
+        setTheme(saved);
+      } else {
+        setTheme('original');
+      }
+    })();
+
+    // ----- CORE FUNCTIONALITY -----
+    let formSubmitted = false;
+    let formData = {};
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYTDmfJjMahenio8L4Otud-9Qy_4VBqQMKGFK5nXqmSUjtXuuOssiSMCgUSwpjAF2AQg/exec';
+
+    function showStatus(message, type) {
+      const status = document.getElementById('status');
+      status.className = type;
+      status.textContent = message;
+      status.style.display = 'block';
+      setTimeout(() => { status.style.display = 'none'; }, 8000);
+    }
+
+    // Submit Form
+    async function submitForm() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      
+      if (!name || !email || !message) {
+        showStatus('⚠️ Please fill all fields!', 'error');
+        return;
+      }
+      
+      formData = { name, email, message };
+      formSubmitted = true;
+      
+      const btn = document.getElementById('submitBtn');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            name: name,
+            email: email,
+            message: message,
+            action: 'form_submitted'
+          })
+        });
         
-        // ============================================
-        // I HAVE PAID BUTTON - Scenario 3 (with User's UPI ID)
-        // ============================================
-        async function handlePaymentDone() {
-            if (!formData.email) {
-                showStatus('⚠️ Please fill and submit the form first!', 'error');
-                return;
-            }
-            
-            const userUpiId = document.getElementById('userUpiId').value.trim();
-            
-            if (!userUpiId) {
-                showStatus('⚠️ Please enter YOUR UPI ID first!', 'error');
-                document.getElementById('userUpiId').focus();
-                return;
-            }
-            
-            // Basic UPI ID validation (contains @)
-            if (!userUpiId.includes('@')) {
-                showStatus('⚠️ Please enter a valid UPI ID (e.g., name@okaxis)', 'error');
-                return;
-            }
-            
-            const paymentBtn = document.getElementById('paymentDoneBtn');
-            paymentBtn.textContent = 'Processing...';
-            paymentBtn.disabled = true;
-            
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        name: formData.name,
-                        email: formData.email,
-                        message: formData.message,
-                        action: 'payment_done',
-                        userUpiId: userUpiId  // Send user's UPI ID
-                    })
-                });
-                
-                const mockOrderId = 'ORD-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + 
-                                   Math.random().toString(36).substring(2, 7).toUpperCase();
-                
-                const orderDisplay = document.getElementById('orderIdDisplay');
-                orderDisplay.innerHTML = `🎉 Payment Confirmed!<br>Order ID: <strong>${mockOrderId}</strong><br>Paid from: <strong>${userUpiId}</strong><br><small>2 confirmation emails sent to ${formData.email}</small>`;
-                orderDisplay.style.display = 'block';
-                
-                showStatus('✅ Payment confirmed! Check your email for Order ID.', 'success');
-                paymentBtn.textContent = '✅ Payment Completed';
-                paymentBtn.disabled = true;
-                
-            } catch (error) {
-                showStatus('❌ Error. Please try again.', 'error');
-                paymentBtn.disabled = false;
-                paymentBtn.textContent = '✅ I Have Paid - Confirm Now';
-                console.error('Error:', error);
-            }
-        }
-    </script>
+        showStatus('✅ Form submitted! Thank you email sent to ' + email, 'success');
+        btn.textContent = '✅ Submitted';
+        btn.disabled = true;
+        
+      } catch (error) {
+        showStatus('❌ Error. Please try again.', 'error');
+        btn.disabled = false;
+        btn.textContent = '📨 Submit';
+        console.error('Error:', error);
+      }
+    }
+
+    // Handle Payment Done
+    async function handlePaymentDone() {
+      // Check if form is submitted
+      if (!formData.email) {
+        showStatus('⚠️ Please fill and submit the form first!', 'error');
+        document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      
+      const userUpiId = document.getElementById('userUpiId').value.trim();
+      
+      if (!userUpiId) {
+        showStatus('⚠️ Please enter YOUR UPI ID first!', 'error');
+        document.getElementById('userUpiId').focus();
+        return;
+      }
+      
+      if (!userUpiId.includes('@')) {
+        showStatus('⚠️ Please enter a valid UPI ID (e.g., name@okaxis)', 'error');
+        return;
+      }
+      
+      const paymentBtn = document.getElementById('paymentDoneBtn');
+      paymentBtn.textContent = 'Processing...';
+      paymentBtn.disabled = true;
+      
+      try {
+        // Send to Google Sheets
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            name: formData.name,
+            email: formData.email,
+            message: formData.message,
+            action: 'payment_done',
+            userUpiId: userUpiId
+          })
+        });
+        
+        // Generate Order ID
+        const mockOrderId = 'ORD-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + 
+                           Math.random().toString(36).substring(2, 7).toUpperCase();
+        
+        // Show confirmation message at bottom
+        const orderDisplay = document.getElementById('orderIdDisplay');
+        orderDisplay.innerHTML = `
+          🎉 Payment Submitted!<br>
+          Order ID: <strong>${mockOrderId}</strong><br>
+          Paid from: <strong>${userUpiId}</strong><br>
+          <small>2 confirmation emails sent to ${formData.email}</small><br>
+          <button class="ok-btn" onclick="showThankYou('${mockOrderId}', '${userUpiId}')">✅ OK</button>
+        `;
+        orderDisplay.style.display = 'block';
+        
+        showStatus('✅ Payment details submitted for verification.', 'success');
+        paymentBtn.textContent = '✅ Payment Completed';
+        paymentBtn.disabled = true;
+        
+      } catch (error) {
+        showStatus('❌ Error. Please try again.', 'error');
+        paymentBtn.disabled = false;
+        paymentBtn.textContent = '✅ I Have Paid - Confirm Now';
+        console.error('Error:', error);
+      }
+    }
+
+    // Show Thank You overlay
+    function showThankYou(orderId, upiId) {
+      document.getElementById('thankyouOrderId').textContent = orderId;
+      document.getElementById('thankyouUpiId').textContent = upiId;
+      document.getElementById('thankyouOverlay').classList.add('active');
+      
+      // Hide the order display
+      document.getElementById('orderIdDisplay').style.display = 'none';
+    }
+
+    // Close Thank You
+    function closeThankYou() {
+      document.getElementById('thankyouOverlay').classList.remove('active');
+      // Reset the payment button
+      document.getElementById('paymentDoneBtn').textContent = '✅ I Have Paid - Confirm Now';
+      document.getElementById('paymentDoneBtn').disabled = false;
+      document.getElementById('userUpiId').value = '';
+    }
+
+    // QR fallback
+    document.addEventListener('DOMContentLoaded', function() {
+      const qr = document.getElementById('qrImage');
+      if (qr) qr.src = 'qrimage.png';
+    });
+  </script>
 </body>
 </html>
