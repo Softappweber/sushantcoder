@@ -353,7 +353,7 @@
         
         // ============================================
         // SUBMIT BUTTON - Scenario 1
-        // ============================================
+        // ===========================================
         async function submitForm() {
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
@@ -460,9 +460,14 @@
                 document.getElementById('upiSection').style.display = 'block';
                 
                 // Generate QR
-                const qrImage = document.getElementById('qrImage');
-                qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=8275679175@upi&pn=Sushant&am=500&cu=INR`;
-                qrImage.style.display = 'block';
+               // const qrImage = document.getElementById('qrImage');
+                //qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=8275679175@upi&pn=Sushant&am=500&cu=INR`;
+                //qrImage.style.display = 'block';
+
+                // Display original UPI QR
+const qrImage = document.getElementById('qrImage');
+qrImage.src = 'qrimage.png';
+qrImage.style.display = 'block';
                 
                 showStatus('📱 Pay via UPI, enter YOUR UPI ID, then click Confirm', 'info');
                 document.getElementById('buyNowBtn').textContent = '💳 Buy Now - ₹500';
