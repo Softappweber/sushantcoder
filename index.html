@@ -825,8 +825,8 @@
     </div>
   </div>
 
-  <script>
-    // THEME SWITCHING
+<script>
+    // THEME SWITCHING (Keep as is)
     function setTheme(theme) {
       document.body.className = 'theme-' + theme;
       document.querySelectorAll('.theme-btn').forEach(btn => {
@@ -848,7 +848,7 @@
     })();
 
     // ----- CORE FUNCTIONALITY -----
-    let formSubmitted = false;
+    let formSubmitted = false; // Track if the form is successfully submitted
     let formData = {};
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYTDmfJjMahenio8L4Otud-9Qy_4VBqQMKGFK5nXqmSUjtXuuOssiSMCgUSwpjAF2AQg/exec';
 
@@ -871,8 +871,8 @@
         return;
       }
       
+      // Save data temporarily
       formData = { name, email, message };
-      formSubmitted = true;
       
       const btn = document.getElementById('submitBtn');
       btn.textContent = 'Sending...';
@@ -895,7 +895,8 @@
         btn.textContent = '✅ Submitted';
         btn.disabled = true;
         
-        // Enable the Pay Now button after form submission
+        // Mark the form as successfully submitted
+        formSubmitted = true;
         document.getElementById('payNowBtn').disabled = false;
         
       } catch (error) {
@@ -906,16 +907,16 @@
       }
     }
 
-    // NEW: Handle Pay Now button click
+    // Handle Pay Now button click
     function handlePayNow() {
-      // Check if form is submitted
-      if (!formData.email) {
+      // Check 1: Is the form submitted?
+      if (!formSubmitted || !formData.email) {
         showStatus('⚠️ Please submit the contact form first!', 'error');
         document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
       
-      // Check if UPI ID is entered
+      // Check 2: Is UPI ID entered?
       const userUpiId = document.getElementById('userUpiId').value.trim();
       if (!userUpiId) {
         showStatus('⚠️ Please enter your UPI ID first!', 'error');
@@ -928,20 +929,16 @@
         return;
       }
       
-      // If all checks pass, scroll to the confirm button and highlight it
+      // If all checks pass, scroll to the confirm button
       document.getElementById('paymentDoneBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
-      document.getElementById('paymentDoneBtn').style.transform = 'scale(1.05)';
-      setTimeout(() => {
-        document.getElementById('paymentDoneBtn').style.transform = 'scale(1)';
-      }, 500);
       
       showStatus('✅ UPI ID verified! Click "I Have Paid - Confirm Now" after making the payment.', 'success');
     }
 
     // Handle Payment Done
     async function handlePaymentDone() {
-      // Check if form is submitted
-      if (!formData.email) {
+      // Prevent accidental double clicks before form is submitted
+      if (!formSubmitted || !formData.email) {
         showStatus('⚠️ Please fill and submit the form first!', 'error');
         document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
@@ -965,7 +962,6 @@
       paymentBtn.disabled = true;
       
       try {
-        // Send to Google Sheets
         await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
@@ -1023,22 +1019,18 @@
       document.getElementById('paymentDoneBtn').textContent = '✅ I Have Paid - Confirm Now';
       document.getElementById('paymentDoneBtn').disabled = false;
       document.getElementById('userUpiId').value = '';
-      // Disable Pay Now button again
-      document.getElementById('payNowBtn').disabled = true;
-      // Reset form submitted flag
-      formSubmitted = false;
-      formData = {};
-      document.getElementById('submitBtn').disabled = false;
-      document.getElementById('submitBtn').textContent = '📨 Submit';
+      
+      // DO NOT RESET formSubmitted! We keep it true so they can pay again if needed.
     }
 
     // QR fallback
     document.addEventListener('DOMContentLoaded', function() {
       const qr = document.getElementById('qrImage');
       if (qr) qr.src = 'qrimage.png';
-      // Initially disable Pay Now button
-      document.getElementById('payNowBtn').disabled = true;
+      
+      // FIX 1: Ensure Pay Now is ENABLED when page loads
+      document.getElementById('payNowBtn').disabled = false;
     });
-  </script>
+</script>
 </body>
 </html>
