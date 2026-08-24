@@ -1032,28 +1032,71 @@
     });
 </script>
 
- <script>
+<script>
 (function(){
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzWQaBC_uqjIi4JFLT1Ry5jVbw_zIH-Mo9t3LUd7WGfBRX0rqnqOHZbdZYgzTqRc1q4g/exec';
+  var SCRIPT_URL = 'YOUR_SCRIPT_DEPLOY_URL_HERE';
   
-  var form = new URLSearchParams();
-  form.append('action', 'track_visit');
-  form.append('data', JSON.stringify({
-    page: 'payment',
-    url: window.location.href,
-    referrer: document.referrer || 'direct'
-  }));
+  // Visitor details collect karo
+  var ua = navigator.userAgent;
+  var device = /Mobile|Android|iPhone/i.test(ua) ? 'Mobile' : 'Desktop';
+  var browser = 'Unknown';
+  if(/Chrome/i.test(ua)) browser = 'Chrome';
+  else if(/Firefox/i.test(ua)) browser = 'Firefox';
+  else if(/Safari/i.test(ua)) browser = 'Safari';
+  else if(/Edge/i.test(ua)) browser = 'Edge';
   
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: form.toString()
-  }).then(function(){
-    console.log('Tracking sent');
-  }).catch(function(e){
-    console.log('Tracking error:', e);
-  });
+  var os = 'Unknown';
+  if(/Windows/i.test(ua)) os = 'Windows';
+  else if(/Mac/i.test(ua)) os = 'MacOS';
+  else if(/Linux/i.test(ua)) os = 'Linux';
+  else if(/Android/i.test(ua)) os = 'Android';
+  else if(/iPhone|iPad/i.test(ua)) os = 'iOS';
+  
+  // IP + Location
+  fetch('https://ipapi.co/json/')
+    .then(function(r){ return r.json(); })
+    .then(function(geo){
+      var form = new URLSearchParams();
+      form.append('action', 'track_visit');
+      form.append('data', JSON.stringify({
+        page: 'landing',
+        url: window.location.href,
+        referrer: document.referrer || 'direct',
+        ip: geo.ip || 'Unknown',
+        device: device,
+        browser: browser,
+        os: os,
+        location: (geo.city || '') + ', ' + (geo.country_name || '')
+      }));
+      
+      return fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: form.toString()
+      });
+    })
+    .catch(function(){
+      var form = new URLSearchParams();
+      form.append('action', 'track_visit');
+      form.append('data', JSON.stringify({
+        page: 'landing',
+        url: window.location.href,
+        referrer: document.referrer || 'direct',
+        ip: 'Unknown',
+        device: device,
+        browser: browser,
+        os: os,
+        location: 'Unknown'
+      }));
+      
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: form.toString()
+      });
+    });
 })();
 </script>
 </body>
