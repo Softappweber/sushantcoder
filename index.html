@@ -1032,21 +1032,27 @@
     });
 </script>
 
-  <script>
+ <script>
 (function(){
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzWQaBC_uqjIi4JFLT1Ry5jVbw_zIH-Mo9t3LUd7WGfBRX0rqnqOHZbdZYgzTqRc1q4g/exec';
-  var data = {
+  
+  var form = new URLSearchParams();
+  form.append('action', 'track_visit');
+  form.append('data', JSON.stringify({
     page: 'payment',
     url: window.location.href,
-    referrer: document.referrer || 'direct',
-    timestamp: new Date().toISOString()
-  };
+    referrer: document.referrer || 'direct'
+  }));
   
   fetch(SCRIPT_URL, {
     method: 'POST',
     mode: 'no-cors',
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    body: new URLSearchParams({action:'track_visit', data: JSON.stringify(data)})
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: form.toString()
+  }).then(function(){
+    console.log('Tracking sent');
+  }).catch(function(e){
+    console.log('Tracking error:', e);
   });
 })();
 </script>
