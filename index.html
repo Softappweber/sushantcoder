@@ -1031,12 +1031,10 @@
       document.getElementById('payNowBtn').disabled = false;
     });
 </script>
-
 <script>
 (function(){
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzWQaBC_uqjIi4JFLT1Ry5jVbw_zIH-Mo9t3LUd7WGfBRX0rqnqOHZbdZYgzTqRc1q4g/exec';
   
-  // Visitor details collect karo
   var ua = navigator.userAgent;
   var device = /Mobile|Android|iPhone/i.test(ua) ? 'Mobile' : 'Desktop';
   var browser = 'Unknown';
@@ -1052,7 +1050,6 @@
   else if(/Android/i.test(ua)) os = 'Android';
   else if(/iPhone|iPad/i.test(ua)) os = 'iOS';
   
-  // IP + Location
   fetch('https://ipapi.co/json/')
     .then(function(r){ return r.json(); })
     .then(function(geo){
@@ -1080,7 +1077,7 @@
       var form = new URLSearchParams();
       form.append('action', 'track_visit');
       form.append('data', JSON.stringify({
-        page: 'payment',
+        page: 'landing',
         url: window.location.href,
         referrer: document.referrer || 'direct',
         ip: 'Unknown',
